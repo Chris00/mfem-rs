@@ -2,9 +2,6 @@
 const MFEM_LIBS: &[&str] = &["mfem"];
 
 fn main() {
-    let target = std::env::var("TARGET").expect("No TARGET environment variable defined");
-    let is_windows = target.to_lowercase().contains("windows");
-
     let mfem_config = MfemConfig::detect();
 
     println!(
@@ -17,9 +14,8 @@ fn main() {
         println!("cargo:rustc-link-lib={lib_type}={lib}");
     }
 
-    if is_windows {
-        println!("cargo:rustc-link-lib=dylib=user32");
-    }
+    #[cfg(target_os = "windows")]
+    println!("cargo:rustc-link-lib=dylib=user32");
 
     let mut build = cxx_build::bridge("src/lib.rs");
 
